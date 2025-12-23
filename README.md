@@ -1,298 +1,219 @@
-# Sistema de Relatórios para ONGs
+# 🐼 Panda Dojo - Sistema de Gestão para Academias de Artes Marciais
 
-Sistema completo e profissional de geração de relatórios narrativos para organizações não governamentais, com editor de texto rico, campos totalmente editáveis, e personalização de documentos (cabeçalho, rodapé e página de rosto).
+Sistema SaaS multitenant completo e inovador para gestão de academias de artes marciais, desenvolvido pela **AnnITech - IT Solutions**. Moderno, intuitivo, responsivo e focado em maximizar a rentabilidade das academias através de automação inteligente e experiência excepcional do usuário.
 
-## Características Principais
+## 🚀 Características Principais
 
-### Relatórios Narrativos Completos
-- ✅ Editor de texto rico (WYSIWYG) com Quill.js
-- ✅ Múltiplas seções editáveis: Resumo Executivo, Introdução, Objetivos, Metodologia, Atividades, Resultados, Desafios, Aprendizados, Próximos Passos e Conclusão
-- ✅ Campos customizáveis para cada projeto e organização
-- ✅ Dados quantitativos (beneficiários, orçamento)
-- ✅ Gestão de status (Rascunho, Em Revisão, Aprovado, Publicado)
+### 💡 Multitenancy Completo
+- Isolamento total de dados entre academias
+- Subdomínios personalizados (ex: minhaacademia.pandadojo.com)
+- Customização de marca (logo, cores, domínio próprio)
+- Base de dados com segregação por tenant_id
 
-### Personalização de Documentos
-- ✅ Página de rosto personalizável com logo, endereço e contato
-- ✅ Cabeçalho customizável com alinhamento configurável
-- ✅ Rodapé configurável com numeração de páginas automática
-- ✅ Formato de página (A4 ou Letter)
-- ✅ Margens ajustáveis
-- ✅ Tamanhos de fonte personalizados
-- ✅ Cores primárias e secundárias configuráveis
+### 🎯 RBAC (Controle de Acesso Baseado em Funções)
+- **Super Admin** (AnnITech): gestão global do sistema
+- **Admin Academia**: gestão completa da academia
+- **Instrutor/Professor**: visualiza alunos, frequência, graduações
+- **Recepcionista**: check-in, matrículas, mensalidades
+- **Aluno**: área pessoal, treinos, pagamentos
+- **Responsável**: acompanha alunos menores de idade
 
-### Exportação Profissional
-- ✅ Geração de PDF com todas as configurações aplicadas
-- ✅ Numeração automática de páginas
-- ✅ Layout profissional e formatação adequada
-- ✅ Suporte a múltiplas configurações de documento
+### 🌐 Landing Page Pública Conversiva
+- Design moderno com vídeo hero section
+- **Agendamento de aulas experimentais** com calendário em tempo real
+- **Calendário público de eventos** e campeonatos
+- Grade de horários das turmas
+- Seção de instrutores e depoimentos
+- Planos e preços transparentes
+- Chatbot com IA integrado
+- FAQ interativo
 
-### Interface Moderna
-- ✅ Dashboard com estatísticas
-- ✅ Interface responsiva e intuitiva
-- ✅ Sistema de abas para organização
-- ✅ Filtros avançados
-- ✅ Design específico para ONGs
+### 📊 Painel Administrativo Completo
+- Dashboard com KPIs em tempo real
+- Gestão de alunos, leads e instrutores
+- Sistema financeiro com múltiplos métodos de pagamento
+- Controle de frequência com check-in por QR Code
+- Gestão de aulas e horários
+- **Módulo completo de eventos e campeonatos**
+- Sistema de graduações e faixas
+- Relatórios e analytics avançados
 
-## Tecnologias Utilizadas
+### 🎉 Eventos e Campeonatos
+- Criação de eventos com categorias customizadas
+- Inscrições online com pagamento integrado
+- Calendário público na landing page
+- Sistema de chaveamento automático para campeonatos
+- Certificados digitais automáticos
+- Galeria de fotos e resultados
+- Transmissão ao vivo (add-on)
 
-### Backend
-- Python 3.8+
-- Flask (API REST)
-- SQLAlchemy (ORM)
-- SQLite (Banco de dados)
-- ReportLab (Geração de PDF)
-- OpenPyXL (Exportação Excel)
+### 💰 Sistema Financeiro Robusto
+- Planos de mensalidade configuráveis
+- Assinaturas recorrentes via Stripe
+- Múltiplas formas de pagamento (cartão, PIX, boleto)
+- Controle de inadimplência com automação
+- Relatórios financeiros completos
+- Comissões para professores
+
+### 📱 Área do Aluno
+- Dashboard pessoal intuitivo
+- Inscrição em eventos com pagamento online
+- Histórico de frequência e pagamentos
+- Certificados digitais
+- Plano de treino personalizado com IA
+- Programa de fidelidade e gamificação
+
+### 🤖 IA e Automação
+- Chatbot inteligente multicanal
+- Predição de churn (alunos em risco)
+- Recomendações de upsell
+- Insights automáticos
+- Geração de conteúdo para redes sociais
+
+## 🛠️ Stack Tecnológica
 
 ### Frontend
-- HTML5
-- CSS3 (Design responsivo)
-- JavaScript (Vanilla)
-- Quill.js (Editor de texto rico)
+- **Framework:** Next.js 14 (App Router) com TypeScript
+- **Estilização:** TailwindCSS + Shadcn/ui
+- **Estado:** Zustand + React Query (TanStack Query)
+- **Formulários:** React Hook Form + Zod
+- **Calendário:** React Big Calendar
+- **Gráficos:** Recharts
+- **Animações:** Framer Motion
 
-## Estrutura do Projeto
+### Backend
+- **Runtime:** Node.js 18+
+- **API:** Next.js API Routes
+- **ORM:** Prisma
+- **Banco de Dados:** PostgreSQL 15+
 
-```
-report/
-├── backend/
-│   ├── app.py              # Aplicação Flask principal com endpoints
-│   ├── models.py           # Modelos de dados (Report, ReportConfig)
-│   ├── database.py         # Configuração do banco de dados
-│   ├── pdf_generator.py    # Gerador de PDF com customizações
-│   └── requirements.txt    # Dependências Python
-├── frontend/
-│   ├── index.html         # Interface principal com modals
-│   ├── css/
-│   │   └── style.css      # Estilos personalizados
-│   └── js/
-│       └── app.js         # Lógica da aplicação
-├── .gitignore
-└── README.md
-```
+### Autenticação & Pagamentos
+- **Auth:** NextAuth.js v5
+- **Pagamentos:** Stripe + Mercado Pago
+- **Email:** Resend + React Email
+- **SMS/WhatsApp:** Twilio
 
-## Instalação e Execução
+### IA & Integrações
+- **LLM:** OpenAI GPT-4
+- **Upload:** Uploadthing
+- **QR Code:** qrcode.react
 
-### 1. Clonar o Repositório
+## 📦 Instalação
 
+### Pré-requisitos
+- Node.js 18+
+- PostgreSQL 15+
+- npm ou yarn
+
+### 1. Clone o repositório
 ```bash
 git clone https://github.com/pandaoproprio/report.git
 cd report
-git checkout claude/locate-system-01S8fKHMCEGhK8Hnj4FA9EQd
+git checkout claude/panda-dojo-system-7Fwnl
 ```
 
-### 2. Configurar Backend
-
+### 2. Instale as dependências
 ```bash
-cd backend
-
-# Criar ambiente virtual (recomendado)
-python -m venv venv
-
-# Ativar ambiente virtual
-# Linux/Mac:
-source venv/bin/activate
-# Windows:
-venv\Scripts\activate
-
-# Instalar dependências
-pip install -r requirements.txt
-
-# Executar servidor
-python app.py
+npm install
 ```
 
-O servidor estará disponível em: `http://localhost:5000`
-
-### 3. Configurar Frontend
-
-Abra o arquivo `frontend/index.html` em um navegador moderno, ou use um servidor HTTP:
-
+### 3. Configure as variáveis de ambiente
 ```bash
-cd frontend
-python -m http.server 8000
-
-# Acesse: http://localhost:8000
+cp .env.example .env.local
 ```
 
-## Uso do Sistema
+Edite `.env.local` e configure:
+- `DATABASE_URL`: URL do PostgreSQL
+- `NEXTAUTH_SECRET`: Gere com `openssl rand -base64 32`
+- `NEXTAUTH_URL`: URL da aplicação
+- Credenciais de serviços (Stripe, Resend, Twilio, OpenAI, etc.)
 
-### 1. Criar um Novo Relatório
-
-1. Clique em "+ Novo Relatório" no Dashboard ou na página de Relatórios
-2. Preencha as informações básicas:
-   - Título e Subtítulo
-   - Nome da Organização e Projeto
-   - Tipo de Relatório (mensal, trimestral, anual, atividade, impacto)
-   - Período de referência
-   - Autor
-3. Navegue para a aba "Conteúdo" e escreva o conteúdo narrativo usando os editores de texto rico
-4. Na aba "Dados Quantitativos", insira informações numéricas
-5. Clique em "Salvar Relatório"
-
-### 2. Gerar PDF
-
-1. Após salvar o relatório, clique em "Exportar PDF" no modal de edição
-2. Ou clique no botão "📄 PDF" no card do relatório
-3. O PDF será gerado com todas as configurações aplicadas
-
-### 3. Configurar Documento
-
-1. Acesse a aba "Configurações" no menu superior
-2. Clique em "+ Nova Configuração" ou edite uma existente
-3. Configure:
-   - **Capa**: Título, organização, endereço, contato
-   - **Cabeçalho**: Texto e alinhamento
-   - **Rodapé**: Texto, alinhamento e formato de numeração
-   - **Página**: Tamanho, margens, fontes e cores
-4. Marque como "Padrão" se desejar usar em novos relatórios
-
-## API Endpoints
-
-### Relatórios
-
-- `GET /api/reports` - Listar todos os relatórios
-- `POST /api/reports` - Criar novo relatório
-- `GET /api/reports/:id` - Obter relatório específico
-- `PUT /api/reports/:id` - Atualizar relatório
-- `DELETE /api/reports/:id` - Deletar relatório
-- `GET /api/reports/:id/pdf` - Exportar relatório em PDF
-
-### Configurações
-
-- `GET /api/configs` - Listar todas as configurações
-- `POST /api/configs` - Criar nova configuração
-- `GET /api/configs/:id` - Obter configuração específica
-- `PUT /api/configs/:id` - Atualizar configuração
-- `DELETE /api/configs/:id` - Deletar configuração
-
-### Estatísticas
-
-- `GET /api/stats` - Obter estatísticas gerais
-
-## Exemplo de Uso da API
-
-### Criar um relatório
-
+### 4. Configure o banco de dados
 ```bash
-curl -X POST http://localhost:5000/api/reports \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Relatório de Atividades - Janeiro 2024",
-    "subtitle": "Projeto Educação para Todos",
-    "organization_name": "Instituto Esperança",
-    "project_name": "Educação para Todos",
-    "report_type": "mensal",
-    "period_start": "2024-01-01",
-    "period_end": "2024-01-31",
-    "author": "Maria Silva",
-    "status": "draft",
-    "introduction": "<p>Este relatório apresenta...</p>",
-    "activities": "<p>Durante o mês foram realizadas...</p>",
-    "results": "<p>Os principais resultados alcançados foram...</p>",
-    "beneficiaries": 150,
-    "budget_used": 25000.00,
-    "budget_total": 30000.00
-  }'
+npx prisma db push
+npm run db:seed
 ```
 
-### Exportar PDF
-
+### 5. Execute em desenvolvimento
 ```bash
-curl -X GET http://localhost:5000/api/reports/1/pdf --output relatorio.pdf
+npm run dev
 ```
 
-## Seções Disponíveis nos Relatórios
+Acesse: http://localhost:3000
 
-1. **Resumo Executivo** - Visão geral do relatório
-2. **Introdução** - Contexto e apresentação
-3. **Objetivos** - Metas e objetivos do período
-4. **Metodologia** - Métodos e abordagens utilizados
-5. **Atividades Realizadas** - Descrição detalhada das atividades
-6. **Resultados Alcançados** - Conquistas e impactos
-7. **Desafios e Dificuldades** - Obstáculos encontrados
-8. **Aprendizados** - Lições aprendidas
-9. **Próximos Passos** - Planejamento futuro
-10. **Conclusão** - Considerações finais
-11. **Conteúdo Adicional** - Informações complementares
+## 🏗️ Estrutura do Projeto
 
-## Tipos de Relatórios
+```
+panda-dojo/
+├── app/                      # Next.js App Router
+│   ├── (auth)/              # Rotas de autenticação
+│   ├── (public)/            # Landing pages públicas
+│   ├── (dashboard)/         # Dashboards (admin, aluno, etc.)
+│   ├── api/                 # API Routes
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── ui/                  # Componentes Shadcn
+│   ├── landing/             # Componentes da landing page
+│   ├── dashboard/           # Componentes dos dashboards
+│   ├── events/              # Componentes de eventos
+│   ├── calendar/            # Componentes de calendário
+│   └── shared/              # Componentes compartilhados
+├── lib/
+│   ├── prisma.ts           # Cliente Prisma
+│   ├── auth.ts             # Configuração NextAuth
+│   ├── stripe.ts           # Cliente Stripe
+│   ├── constants.ts        # Constantes do sistema
+│   └── utils.ts            # Utilitários
+├── prisma/
+│   ├── schema.prisma       # Schema do banco de dados
+│   └── seed.ts             # Dados de exemplo
+├── public/                  # Assets estáticos
+└── types/                   # Tipos TypeScript
+```
 
-- **Mensal** - Relatório de atividades mensais
-- **Trimestral** - Relatório trimestral
-- **Anual** - Relatório anual de atividades
-- **Atividade** - Relatório de atividade específica
-- **Impacto** - Relatório de impacto social
+## 💎 Planos e Preços
 
-## Status dos Relatórios
+### Planos Principais
+- **Starter**: R$ 97/mês - Até 50 alunos, 5 eventos/mês
+- **Growth**: R$ 197/mês - Até 200 alunos, 15 eventos/mês
+- **Professional**: R$ 397/mês - Até 500 alunos, 30 eventos/mês
+- **Enterprise**: R$ 697/mês - Ilimitado
 
-- **Rascunho** (draft) - Relatório em elaboração
-- **Em Revisão** (review) - Aguardando revisão
-- **Aprovado** (approved) - Relatório aprovado
-- **Publicado** (published) - Relatório publicado
+### Add-ons Opcionais
+- Campeonatos Avançados: +R$ 99/mês
+- IA Premium: +R$ 79/mês
+- App White-Label: +R$ 299/mês
+- Suporte Prioritário: +R$ 149/mês
+- Transmissão ao Vivo: +R$ 199/mês
 
-## Personalização
+## 🎨 Funcionalidades por Fase
 
-### Cores
+### ✅ Fase 1: Foundation (Completo)
+- Setup Next.js 14
+- Prisma + PostgreSQL
+- Sistema multitenant
+- Autenticação básica
+- RBAC middleware
+- Componentes UI base
 
-As cores primárias e secundárias podem ser ajustadas na configuração de documento para refletir a identidade visual da organização.
+### 🚧 Fase 2: Landing Page (Em desenvolvimento)
+- Hero section
+- Agendamento experimental
+- Calendário de eventos
+- Grade de horários
+- Depoimentos
+- FAQ
 
-### Fontes
+### 📋 Próximas Fases
+- Dashboard Admin
+- Gestão de Eventos
+- Sistema Financeiro
+- Check-in QR Code
+- Área do Aluno
+- IA e Automação
 
-Tamanhos de fonte configuráveis:
-- Texto normal: 8-16pt
-- Título 1: 12-24pt
-- Título 2: 10-20pt
-
-### Margens
-
-Margens ajustáveis em centímetros para cada lado da página.
-
-## Banco de Dados
-
-O sistema usa SQLite por padrão. O banco é criado automaticamente na primeira execução em `backend/reports.db`.
-
-### Modelos
-
-- **Report**: Armazena os dados do relatório incluindo todos os campos narrativos e quantitativos
-- **ReportConfig**: Armazena configurações de documento (capa, cabeçalho, rodapé, página)
-
-## Desenvolvimento
-
-### Adicionar Novas Seções
-
-Para adicionar uma nova seção ao relatório:
-
-1. Adicione o campo no modelo `Report` em `backend/models.py`
-2. Atualize os endpoints em `backend/app.py`
-3. Adicione o editor no HTML em `frontend/index.html`
-4. Adicione a lógica em `frontend/js/app.js`
-5. Atualize o gerador de PDF em `backend/pdf_generator.py`
-
-### Customizar Geração de PDF
-
-Edite `backend/pdf_generator.py` para ajustar:
-- Estilos de texto
-- Layout de página
-- Tabelas e gráficos
-- Formatação especial
-
-## Problemas Comuns
-
-### PDF não está gerando
-
-- Verifique se o ReportLab está instalado corretamente
-- Verifique logs do servidor Flask para erros
-
-### Editor de texto não carrega
-
-- Verifique a conexão com CDN do Quill.js
-- Abra o console do navegador para ver erros
-
-### Banco de dados não inicializa
-
-- Verifique permissões de escrita na pasta `backend/`
-- Delete o arquivo `reports.db` e reinicie o servidor
-
-## Contribuindo
+## 🤝 Contribuindo
 
 1. Fork o projeto
 2. Crie uma branch para sua feature (`git checkout -b feature/NovaFuncionalidade`)
@@ -300,14 +221,32 @@ Edite `backend/pdf_generator.py` para ajustar:
 4. Push para a branch (`git push origin feature/NovaFuncionalidade`)
 5. Abra um Pull Request
 
-## Licença
+## 📝 Licença
 
-Este projeto é de código aberto e está disponível sob a licença MIT.
+Este projeto é proprietário da **AnnITech - IT Solutions**.
 
-## Suporte
+## 🆘 Suporte
 
-Para reportar bugs ou solicitar funcionalidades, abra uma issue no repositório.
+Para reportar bugs ou solicitar funcionalidades:
+- Abra uma issue no repositório
+- Entre em contato: suporte@annitech.com
 
-## Créditos
+## 🎯 Roadmap
 
-Desenvolvido para organizações não governamentais que precisam de relatórios profissionais e personalizáveis.
+- [ ] Landing Page completa
+- [ ] Dashboard Admin
+- [ ] Módulo de Eventos
+- [ ] Sistema Financeiro (Stripe + MercadoPago)
+- [ ] Check-in QR Code
+- [ ] Área do Aluno
+- [ ] Chatbot com IA
+- [ ] App Mobile (React Native)
+- [ ] Marketplace de produtos
+- [ ] Ranking nacional de atletas
+- [ ] Federação virtual
+
+---
+
+**Desenvolvido com ❤️ pela AnnITech - IT Solutions**
+
+🐼 Revolucionando a gestão de academias de artes marciais!

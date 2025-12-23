@@ -1,0 +1,829 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== MULTITENANCY ====================
+
+model Tenant {
+  id        String   @id @default(cuid())
+  subdomain String   @unique
+  customDomain String? @unique
+  name      String
+  slug      String   @unique
+
+  // Visual
+  logoUrl        String?
+  primaryColor   String   @default("#0F172A")
+  secondaryColor String   @default("#F97316")
+
+  // Status & Plan
+  status      TenantStatus @default(ACTIVE)
+  plan        PlanType     @default(STARTER)
+  maxStudents Int          @default(50)
+  maxEvents   Int          @default(5)
+
+  // Onboarding
+  onboardingCompleted Boolean @default(false)
+  onboardingStep      Int     @default(0)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users               User[]
+  students            Student[]
+  leads               Lead[]
+  instructors         Instructor[]
+  events              Event[]
+  modalities          Modality[]
+  classes             Class[]
+  membershipPlans     MembershipPlan[]
+  payments            Payment[]
+  attendances         Attendance[]
+  belts               Belt[]
+  badges              Badge[]
+  enrollments         Enrollment[]
+  subscriptions       Subscription[]
+  eventRegistrations  EventRegistration[]
+
+  @@map("tenants")
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  TRIAL
+  CANCELLED
+}
+
+enum PlanType {
+  STARTER
+  GROWTH
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+// ==================== USERS & AUTH ====================
+
+model User {
+  id       String  @id @default(cuid())
+  tenantId String?
+  tenant   Tenant? @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Auth
+  email         String   @unique
+  emailVerified DateTime?
+  passwordHash  String?
+  name          String
+  image         String?
+  phone         String?
+
+  // Role & Permissions
+  role        UserRole @default(STUDENT)
+  permissions Json?
+
+  // 2FA
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecret  String?
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastLoginAt DateTime?
+
+  // Relations
+  accounts    Account[]
+  sessions    Session[]
+  student     Student?
+  instructor  Instructor?
+
+  @@map("users")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  INSTRUCTOR
+  RECEPTIONIST
+  STUDENT
+  GUARDIAN
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ==================== STUDENTS & LEADS ====================
+
+model Student {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Dados pessoais
+  fullName    String
+  dateOfBirth DateTime
+  gender      Gender
+  cpf         String?
+  rg          String?
+  photoUrl    String?
+
+  // Contatos
+  emergencyContact String
+  emergencyPhone   String
+  guardianId       String?
+
+  // Médico
+  medicalCertificateUrl String?
+  healthNotes           String?  @db.Text
+  bloodType             String?
+
+  // Acadêmico
+  enrollmentDate DateTime      @default(now())
+  status         StudentStatus @default(ACTIVE)
+  currentBeltId  String?
+  currentBelt    Belt?         @relation(fields: [currentBeltId], references: [id])
+
+  // Gamificação
+  points Int @default(0)
+  level  Int @default(1)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  enrollments        Enrollment[]
+  attendances        Attendance[]
+  payments           Payment[]
+  eventRegistrations EventRegistration[]
+  beltProgressions   BeltProgression[]
+  subscriptions      Subscription[]
+  badges             StudentBadge[]
+
+  @@map("students")
+}
+
+model Lead {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Dados do lead
+  name               String
+  email              String
+  phone              String
+  age                Int?
+  interestedModality String?
+
+  // Agendamento experimental
+  trialClassDate    DateTime?
+  trialClassTime    String?
+  preferredSchedule String?
+
+  // Status
+  status LeadStatus @default(SCHEDULED)
+  source LeadSource @default(LANDING_PAGE)
+
+  // Conversão
+  convertedToStudentId String?
+  convertedAt          DateTime?
+
+  // Follow-up
+  notes          String?   @db.Text
+  lastContactAt  DateTime?
+  nextFollowUpAt DateTime?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("leads")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum StudentStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  GRADUATED
+}
+
+enum LeadStatus {
+  SCHEDULED
+  ATTENDED
+  CONVERTED
+  NO_SHOW
+  LOST
+}
+
+enum LeadSource {
+  LANDING_PAGE
+  REFERRAL
+  SOCIAL_MEDIA
+  GOOGLE_ADS
+  WALK_IN
+  OTHER
+}
+
+// ==================== INSTRUCTORS ====================
+
+model Instructor {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Dados profissionais
+  fullName      String
+  bio           String?       @db.Text
+  specialties   String[]
+  certifications String[]
+  photoUrl      String?
+
+  // Experiência
+  yearsOfExperience Int?
+  beltLevel         String?
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  classes        Class[]
+  events         EventInstructor[]
+
+  @@map("instructors")
+}
+
+// ==================== EVENTS & CHAMPIONSHIPS ====================
+
+model Event {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  // Básico
+  name        String
+  slug        String
+  description String @db.Text
+  type        EventType
+
+  // Datas
+  startDate         DateTime
+  endDate           DateTime
+  registrationStart DateTime
+  registrationEnd   DateTime
+
+  // Local
+  venue    String
+  address  String?
+  isOnline Boolean @default(false)
+  streamUrl String?
+
+  // Visual
+  bannerUrl    String?
+  thumbnailUrl String?
+
+  // Configurações
+  maxParticipants  Int?
+  isPublic         Boolean @default(true)
+  requiresApproval Boolean @default(false)
+
+  // Preços
+  isFree    Boolean  @default(false)
+  basePrice Decimal? @db.Decimal(10, 2)
+
+  // Status
+  status   EventStatus @default(DRAFT)
+  featured Boolean     @default(false)
+
+  // Requisitos
+  minBeltLevel Int?
+  minAge       Int?
+  maxAge       Int?
+
+  // Programação
+  schedule Json?
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+
+  // Relations
+  registrations EventRegistration[]
+  categories    EventCategory[]
+  brackets      Bracket[]
+  instructors   EventInstructor[]
+  modalities    EventModality[]
+
+  @@unique([tenantId, slug])
+  @@map("events")
+}
+
+model EventCategory {
+  id      String @id @default(cuid())
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  name      String
+  minAge    Int?
+  maxAge    Int?
+  gender    Gender?
+  minWeight Decimal? @db.Decimal(5, 2)
+  maxWeight Decimal? @db.Decimal(5, 2)
+  beltLevel String?
+  price     Decimal  @db.Decimal(10, 2)
+  maxParticipants Int?
+
+  registrations EventRegistration[]
+
+  @@map("event_categories")
+}
+
+model EventRegistration {
+  id         String         @id @default(cuid())
+  tenantId   String
+  tenant     Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  eventId    String
+  event      Event          @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  categoryId String?
+  category   EventCategory? @relation(fields: [categoryId], references: [id])
+
+  // Participante
+  studentId String?
+  student   Student? @relation(fields: [studentId], references: [id])
+
+  // Dados externos (não alunos)
+  externalName    String?
+  externalEmail   String?
+  externalPhone   String?
+  externalAcademy String?
+
+  // Status
+  status        RegistrationStatus @default(PENDING)
+  paymentStatus PaymentStatus      @default(PENDING)
+
+  // Check-in
+  checkedInAt DateTime?
+
+  // Certificado
+  certificateUrl String?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Pagamento
+  paymentId String?
+  payment   Payment? @relation(fields: [paymentId], references: [id])
+
+  @@map("event_registrations")
+}
+
+model Bracket {
+  id         String @id @default(cuid())
+  eventId    String
+  event      Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  categoryId String
+
+  type   BracketType @default(SINGLE_ELIMINATION)
+  rounds Json
+
+  // Resultado
+  winnerId      String?
+  secondPlaceId String?
+  thirdPlaceIds String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("brackets")
+}
+
+model EventInstructor {
+  id           String     @id @default(cuid())
+  eventId      String
+  event        Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  instructorId String
+  instructor   Instructor @relation(fields: [instructorId], references: [id], onDelete: Cascade)
+  role         String?
+
+  @@unique([eventId, instructorId])
+  @@map("event_instructors")
+}
+
+model EventModality {
+  id         String   @id @default(cuid())
+  eventId    String
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  modalityId String
+  modality   Modality @relation(fields: [modalityId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, modalityId])
+  @@map("event_modalities")
+}
+
+enum EventType {
+  CHAMPIONSHIP
+  WORKSHOP
+  SEMINAR
+  BELT_EXAM
+  SOCIAL
+  SPECIAL_CLASS
+  OTHER
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  REGISTRATION_OPEN
+  REGISTRATION_CLOSED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum RegistrationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  CHECKED_IN
+}
+
+enum BracketType {
+  SINGLE_ELIMINATION
+  DOUBLE_ELIMINATION
+  ROUND_ROBIN
+  HYBRID
+}
+
+// ==================== CLASSES & SCHEDULE ====================
+
+model Class {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  name         String
+  modalityId   String
+  modality     Modality @relation(fields: [modalityId], references: [id])
+  instructorId String
+  instructor   Instructor @relation(fields: [instructorId], references: [id])
+
+  // Horário
+  dayOfWeek Int    // 0-6 (domingo-sábado)
+  startTime String // "19:00"
+  endTime   String // "20:30"
+
+  // Capacidade
+  maxStudents Int @default(30)
+
+  // Nível
+  level ClassLevel
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Relações
+  enrollments Enrollment[]
+  attendances Attendance[]
+
+  @@map("classes")
+}
+
+model Enrollment {
+  id        String @id @default(cuid())
+  tenantId  String
+  tenant    Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classId   String
+  class     Class   @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  enrolledAt DateTime @default(now())
+  isActive   Boolean  @default(true)
+
+  @@unique([studentId, classId])
+  @@map("enrollments")
+}
+
+model Attendance {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  classId   String
+  class     Class   @relation(fields: [classId], references: [id], onDelete: Cascade)
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  date         DateTime        @default(now())
+  checkInTime  DateTime?
+  checkOutTime DateTime?
+  method       CheckInMethod   @default(QR_CODE)
+  photoUrl     String?
+
+  createdAt DateTime @default(now())
+
+  @@map("attendances")
+}
+
+enum ClassLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  MIXED
+}
+
+enum CheckInMethod {
+  QR_CODE
+  FACIAL_RECOGNITION
+  MANUAL
+  TURNSTILE
+}
+
+// ==================== PAYMENTS & SUBSCRIPTIONS ====================
+
+model Payment {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  studentId String?
+  student   Student? @relation(fields: [studentId], references: [id])
+
+  // Tipo
+  type PaymentType
+
+  // Valor
+  amount   Decimal @db.Decimal(10, 2)
+  currency String  @default("BRL")
+
+  // Status
+  status PaymentStatus
+
+  // Método
+  method PaymentMethod
+
+  // Referência externa
+  stripePaymentId  String?
+  mercadoPagoId    String?
+
+  // Descrição
+  description String
+
+  // Recorrência
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  // Datas
+  dueDate DateTime?
+  paidAt  DateTime?
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relações
+  eventRegistrations EventRegistration[]
+
+  @@map("payments")
+}
+
+model Subscription {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  planId String
+  plan   MembershipPlan @relation(fields: [planId], references: [id])
+
+  status SubscriptionStatus
+
+  // Stripe
+  stripeSubscriptionId String?
+
+  // Datas
+  startDate       DateTime
+  endDate         DateTime?
+  nextBillingDate DateTime
+
+  // Valores
+  amount Decimal @db.Decimal(10, 2)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  cancelledAt DateTime?
+
+  payments Payment[]
+
+  @@map("subscriptions")
+}
+
+model MembershipPlan {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String? @db.Text
+  price       Decimal @db.Decimal(10, 2)
+
+  // Duração
+  durationMonths Int @default(1)
+
+  // Benefícios
+  benefits String[]
+
+  // Modalidades incluídas
+  modalityIds String[]
+
+  // Status
+  isActive Boolean @default(true)
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  subscriptions Subscription[]
+
+  @@map("membership_plans")
+}
+
+enum PaymentType {
+  MONTHLY_FEE
+  EVENT_REGISTRATION
+  PRODUCT
+  BELT_EXAM
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  PIX
+  BOLETO
+  CASH
+  BANK_TRANSFER
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  PAUSED
+}
+
+// ==================== MODALITIES & BELTS ====================
+
+model Modality {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String @db.Text
+  imageUrl    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  belts   Belt[]
+  classes Class[]
+  events  EventModality[]
+
+  @@map("modalities")
+}
+
+model Belt {
+  id         String   @id @default(cuid())
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  modalityId String
+  modality   Modality @relation(fields: [modalityId], references: [id], onDelete: Cascade)
+
+  name  String
+  level Int
+  color String
+
+  students     Student[]
+  progressions BeltProgression[]
+
+  @@map("belts")
+}
+
+model BeltProgression {
+  id        String @id @default(cuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  beltId String
+  belt   Belt   @relation(fields: [beltId], references: [id])
+
+  awardedAt DateTime @default(now())
+  awardedBy String
+
+  certificateUrl String?
+  photoUrl       String?
+  notes          String? @db.Text
+
+  @@map("belt_progressions")
+}
+
+// ==================== GAMIFICATION ====================
+
+model Badge {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String @db.Text
+  iconUrl     String
+  points      Int    @default(0)
+
+  students StudentBadge[]
+
+  @@map("badges")
+}
+
+model StudentBadge {
+  id        String @id @default(cuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge   @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  earnedAt DateTime @default(now())
+
+  @@unique([studentId, badgeId])
+  @@map("student_badges")
+}
