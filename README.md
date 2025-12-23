@@ -187,31 +187,54 @@ panda-dojo/
 - Suporte Prioritário: +R$ 149/mês
 - Transmissão ao Vivo: +R$ 199/mês
 
-## 🎨 Funcionalidades por Fase
+## 🎨 Funcionalidades Implementadas
 
 ### ✅ Fase 1: Foundation (Completo)
-- Setup Next.js 14
-- Prisma + PostgreSQL
-- Sistema multitenant
-- Autenticação básica
-- RBAC middleware
-- Componentes UI base
+- ✅ Setup Next.js 14 com TypeScript
+- ✅ Prisma ORM + Schema completo multitenant
+- ✅ Sistema multitenant com tenant_id
+- ✅ TailwindCSS + Shadcn/ui configurado
+- ✅ Componentes UI base (Button, Card, Input, Badge, Dialog, Accordion, Label)
 
-### 🚧 Fase 2: Landing Page (Em desenvolvimento)
-- Hero section
-- Agendamento experimental
-- Calendário de eventos
-- Grade de horários
-- Depoimentos
-- FAQ
+### ✅ Fase 2: Autenticação & RBAC (Completo)
+- ✅ NextAuth.js v5 configurado
+- ✅ Login com credenciais + OAuth (Google/Facebook)
+- ✅ Registro com criação automática de tenant
+- ✅ 6 níveis de RBAC (Super Admin → Guardian)
+- ✅ Middleware de proteção de rotas
+- ✅ API de registro com validação Zod
 
-### 📋 Próximas Fases
-- Dashboard Admin
-- Gestão de Eventos
-- Sistema Financeiro
-- Check-in QR Code
-- Área do Aluno
-- IA e Automação
+### ✅ Fase 3: Landing Page (Completo)
+- ✅ Navbar responsivo com menu mobile
+- ✅ Hero section com gradientes e CTAs
+- ✅ Seção de modalidades (8 artes marciais)
+- ✅ Seção de eventos com inscrições
+- ✅ Grade de horários semanal
+- ✅ Seção de instrutores
+- ✅ Depoimentos com avaliações
+- ✅ Planos e preços (3 opções)
+- ✅ FAQ com Accordion
+- ✅ CTA final e Footer completo
+
+### ✅ Fase 4: Dashboard Admin (Básico)
+- ✅ Layout com sidebar de navegação
+- ✅ Dashboard com KPIs (alunos, receita, eventos)
+- ✅ Cards de atividade recente
+- ✅ Alertas e notificações
+- ✅ Links para módulos futuros
+
+### 📋 Próximas Implementações (Roadmap)
+- ⏳ CRUD completo de Alunos
+- ⏳ Gestão de Leads com follow-up
+- ⏳ Módulo de Eventos completo
+- ⏳ Sistema de Inscrições em eventos
+- ⏳ Integração Stripe para pagamentos
+- ⏳ Check-in por QR Code
+- ⏳ Área do Aluno self-service
+- ⏳ Sistema de chaveamento para campeonatos
+- ⏳ Chatbot com IA (OpenAI)
+- ⏳ Sistema de notificações (Email/SMS)
+- ⏳ Seed data completo
 
 ## 🤝 Contribuindo
 
