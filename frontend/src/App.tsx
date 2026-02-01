@@ -10,6 +10,8 @@ import { Dashboard } from './pages/Dashboard';
 import { Users } from './pages/Users';
 import { Roles } from './pages/Roles';
 import { Unauthorized } from './pages/Unauthorized';
+import { InventarioAtivos } from './pages/ativos/InventarioAtivos';
+import { EmprestimosAtivos } from './pages/ativos/EmprestimosAtivos';
 
 const App: React.FC = () => {
   return (
@@ -54,20 +56,44 @@ const App: React.FC = () => {
             }
           />
 
-          {/* Placeholder routes for future modules */}
+          {/* Ativos Routes */}
           <Route
             path="/ativos"
             element={
               <ProtectedRoute requiredPermission="ativos.visualizar">
                 <MainLayout>
+                  <InventarioAtivos />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/ativos/emprestimos"
+            element={
+              <ProtectedRoute requiredPermission="ativos.visualizar">
+                <MainLayout>
+                  <EmprestimosAtivos />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/ativos/categorias"
+            element={
+              <ProtectedRoute requiredPermission="ativos.visualizar">
+                <MainLayout>
                   <div className="p-6">
-                    <h1 className="text-3xl font-bold">Ativos</h1>
-                    <p className="text-text-secondary mt-2">Em desenvolvimento - PASSO 2</p>
+                    <h1 className="text-3xl font-bold">Categorias</h1>
+                    <p className="text-text-secondary mt-2">Em desenvolvimento</p>
                   </div>
                 </MainLayout>
               </ProtectedRoute>
             }
           />
+
+          {/* Placeholder routes for future modules */}
 
           <Route
             path="/termos/*"
