@@ -1,0 +1,133 @@
+=================================================================
+🐼 PANDA DOJO - COMANDOS PARA CLONAR O REPOSITÓRIO
+=================================================================
+
+📋 PASSO 1: Criar o Repositório no GitHub
+-----------------------------------------------------------------
+1. Acesse: https://github.com/new
+
+2. Preencha:
+   ✓ Repository name: pandadojo
+   ✓ Description: Sistema SaaS para gestão de academias
+   ✓ Public ou Private (sua escolha)
+
+3. IMPORTANTE - NÃO MARQUE:
+   ✗ Add a README file
+   ✗ Add .gitignore
+   ✗ Choose a license
+
+4. Clique em "Create repository"
+
+
+📋 PASSO 2: Executar Comandos no Terminal
+-----------------------------------------------------------------
+
+Copie e cole estes comandos no terminal (dentro da pasta do projeto):
+
+# 1. Adicionar o novo repositório
+git remote add pandadojo https://github.com/pandaoproprio/pandadojo.git
+
+# 2. Fazer push do código
+git push pandadojo claude/panda-dojo-system-7Fwnl:main -u
+
+# 3. Verificar se funcionou
+git remote -v
+
+
+📋 PASSO 3: Configurar Branch Padrão no GitHub
+-----------------------------------------------------------------
+1. Acesse: https://github.com/pandaoproprio/pandadojo/settings/branches
+
+2. Em "Default branch", clique no botão com ícone de lápis
+
+3. Selecione "main"
+
+4. Clique em "Update"
+
+
+🎯 RESULTADO ESPERADO
+-----------------------------------------------------------------
+✅ Código disponível em: https://github.com/pandaoproprio/pandadojo
+✅ Branch principal: main
+✅ Todo o histórico de commits preservado
+✅ 4 commits no total
+
+
+📝 ALTERNATIVA: Usar o Script Automático
+-----------------------------------------------------------------
+# Dê permissão de execução (se não tiver)
+chmod +x clone-to-pandadojo.sh
+
+# Execute o script
+./clone-to-pandadojo.sh
+
+
+🔧 EM CASO DE ERRO
+-----------------------------------------------------------------
+
+Erro: "Permission denied"
+→ Solução: Configure suas credenciais do GitHub
+  git config --global user.name "Seu Nome"
+  git config --global user.email "seu@email.com"
+
+Erro: "Repository not found"
+→ Solução: Certifique-se que criou o repositório no GitHub primeiro
+  com o nome exato: pandadojo (tudo minúsculo)
+
+Erro: "Authentication failed"
+→ Solução: Use um Personal Access Token
+  1. Gere em: https://github.com/settings/tokens
+  2. Ao fazer push, use o token como senha
+
+
+📊 VERIFICAR SE DEU CERTO
+-----------------------------------------------------------------
+# Ver os remotes configurados
+git remote -v
+
+# Deve mostrar:
+# origin     http://...pandaoproprio/report.git
+# pandadojo  https://github.com/pandaoproprio/pandadojo.git
+
+# Ver branches no novo repositório
+git ls-remote pandadojo
+
+# Acessar no navegador
+# https://github.com/pandaoproprio/pandadojo
+
+
+🚀 DEPLOY NA VERCEL COM NOVO REPOSITÓRIO
+-----------------------------------------------------------------
+1. Acesse: https://vercel.com/new
+
+2. Clique em "Import Git Repository"
+
+3. Selecione: pandaoproprio/pandadojo
+
+4. Configure:
+   - Framework Preset: Next.js
+   - Root Directory: ./
+   - Build Command: (deixe padrão)
+   - Output Directory: (deixe padrão)
+
+5. Environment Variables:
+   DATABASE_URL=sua-url-do-supabase
+   NEXTAUTH_URL=https://seu-projeto.vercel.app
+   NEXTAUTH_SECRET=sua-secret
+
+6. Clique em "Deploy"
+
+
+✅ CHECKLIST FINAL
+-----------------------------------------------------------------
+□ Repositório criado no GitHub (pandadojo)
+□ Remote adicionado (git remote add pandadojo ...)
+□ Push realizado (git push pandadojo ...)
+□ Código visível em github.com/pandaoproprio/pandadojo
+□ Branch "main" configurada como padrão
+□ Deploy na Vercel feito (opcional)
+
+
+=================================================================
+Dúvidas? Todos os detalhes estão em: CLONE_REPO_GUIDE.md
+=================================================================
